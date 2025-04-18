@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RedCom360 - Plataforma para Artistas y Creativos</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#6D28D9',
+                        secondary: '#DB2777',
+                        dark: '#1E1B4B',
+                        light: '#F5F3FF',
+                        accent: '#10B981'
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Poppins', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F5F3FF;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, #6D28D9 0%, #DB2777 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #6D28D9 0%, #DB2777 100%);
+        }
+        
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .language-selector {
+            transition: all 0.3s ease;
+        }
+        
+        .language-selector:hover {
+            transform: scale(1.1);
+        }
+        
+        .nav-link {
+            position: relative;
+        }
+        
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -2px;
+            left: 0;
+            background-color: #6D28D9;
+            transition: width 0.3s ease;
+        }
+        
+        .nav-link:hover:after {
+            width: 100%;
+        }
+        
+        .active-nav:after {
+            width: 100%;
+        }
+        
+        .artist-card:hover .artist-overlay {
+            opacity: 1;
+        }
+        
+        .artist-overlay {
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+        
+        .toggle-checkbox:checked {
+            right: 0;
+            background-color: #6D28D9;
+        }
+        
+        .toggle-checkbox:checked + .toggle-label {
+            background-color: #A78BFA;
+        }
+    </style>
+</head>
+
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/service-worker.js')
+      .then(reg => console.log('SW registered'))
+      .catch(err => console.error('SW registration failed:', err));
+  }
+</script>
+<srcipt src="../Login.js,Registro.js,supabase.js"> 
+<body class="text-dark">
+    <!-- Language Selector Floating Button -->
+    <div class="fixed bottom-6 right-6 z-50 flex flex-col items-center space-y-2">
+        <div id="languageDropdown" class="hidden bg-white rounded-lg shadow-xl p-2 space-y-2">
+            <button class="language-selector flex items-center space-x-2 p-2 rounded hover:bg-purple-50 w-full">
+                <img src="https://flagcdn.com/w20/es.png" alt="Español" class="w-5 h-5">
+                <span>Español</span>
+            </button>
+            <button class="language-selector flex items-center space-x-2 p-2 rounded hover:bg-purple-50 w-full">
+                <img src="https://flagcdn.com/w20/gb.png" alt="English" class="w-5 h-5">
+                <span>English</span>
+            </button>
+            <button class="language-selector flex items-center space-x-2 p-2 rounded hover:bg-purple-50 w-full">
+                <img src="https://flagcdn.com/w20/fr.png" alt="Français" class="w-5 h-5">
+                <span>Français</span>
+            </button>
+            <button class="language-selector flex items-center space-x-2 p-2 rounded hover:bg-purple-50 w-full">
+                <img src="https://flagcdn.com/w20/pt.png" alt="Português" class="w-5 h-5">
+                <span>Português</span>
+            </button>
+        </div>
+        <button id="languageButton" class="gradient-bg text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all">
+            <i class="fas fa-globe text-xl"></i>
+        </button>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="bg-white shadow-sm sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16">
+                <div class="flex items-center">
+                    <a href="#" class="flex items-center space-x-2">
+                        <div class="gradient-bg text-white p-2 rounded-lg">
+                            <i class="fas fa-palette text-xl"></i>
+                        </div>
+                        <span class="text-xl font-bold font-display gradient-text">RedCom360</span>
+                    </a>
+                </div>
+                
+                <div class="hidden md:flex items-center space-x-8">
+                    <a href="#directorio" class="nav-link text-gray-700 hover:text-primary transition">Directorio</a>
+                    <a href="#ia" class="nav-link text-gray-700 hover:text-primary transition">IA Creativa</a>
+                    <a href="#eventos" class="nav-link text-gray-700 hover:text-primary transition">Eventos</a>
+                    <a href="#marketplace" class="nav-link text-gray-700 hover:text-primary transition">Marketplace</a>
+                    <a href="#comunidad" class="nav-link text-gray-700 hover:text-primary transition">Comunidad</a>
+                </div>
+                
+                <div class="flex items-center space-x-4">
+                    <button class="md:hidden text-gray-500 hover:text-primary focus:outline-none">
+                        <i class="fas fa-bars text-xl"></i>
+                    </button>
+                    <div class="hidden md:flex items-center space-x-4">
+                        <a href="#" class="text-gray-700 hover:text-primary transition">Iniciar sesión</a>
+                        <a href="#" class="gradient-bg text-white px-4 py-2 rounded-lg hover:shadow-md transition">Registrarse</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="gradient-bg text-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 md:py-28">
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold font-display mb-6">Conecta, crea y haz crecer tu arte</h1>
+                    <p class="text-xl mb-8 opacity-90">La plataforma todo en uno para artistas, creadores y profesionales culturales. Descubre oportunidades, automatiza tu trabajo y haz crecer tu red profesional.</p>
+                    <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4">
+                        <a href="#" class="bg-white text-primary px-6 py-3 rounded-lg font-medium text-center hover:bg-opacity-90 transition">Explorar artistas</a>
+                        <a href="#" class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium text-center hover:bg-white hover:bg-opacity-10 transition">Regístrate gratis</a>
+                    </div>
+                </div>
+                <div class="relative">
+                    <div class="bg-white bg-opacity-20 backdrop-filter backdrop-blur-lg rounded-2xl p-4 shadow-xl">
+                        <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Artista en escena" class="rounded-xl w-full h-auto">
+                    </div>
+                    <div class="absolute -bottom-6 -left-6 bg-accent text-white p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-bolt"></i>
+                            <span class="font-medium">+5,000 artistas</span>
+                        </div>
+                    </div>
+                    <div class="absolute -top-6 -right-6 bg-secondary text-white p-4 rounded-xl shadow-lg">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-calendar-alt"></i>
+                            <span class="font-medium">Eventos diarios</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section class="bg-white py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold font-display mb-4">Todo lo que necesitas en un solo lugar</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">RedCom360 integra las herramientas más avanzadas para potenciar tu carrera creativa</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Directorio Global</h3>
+                    <p class="text-gray-600 mb-4">Conecta con artistas, técnicos y organizadores de todo el mundo. Filtra por disciplina, ubicación y estilo.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Explorar perfiles</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 2 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">IA Creativa</h3>
+                    <p class="text-gray-600 mb-4">Genera biografías, descripciones y contenido multimedia automáticamente con nuestra inteligencia artificial.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Probar herramientas</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 3 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-calendar-star"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Gestión de Eventos</h3>
+                    <p class="text-gray-600 mb-4">Organiza eventos físicos, virtuales o híbridos con herramientas integradas de ticketing y promoción.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Crear evento</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 4 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Marketplace</h3>
+                    <p class="text-gray-600 mb-4">Contrata servicios creativos o ofrece los tuyos con nuestro sistema seguro de pagos y valoraciones.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Ver servicios</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 5 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Comunidad</h3>
+                    <p class="text-gray-600 mb-4">Únete a foros temáticos, participa en convocatorias y haz networking con profesionales afines.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Unirse a la comunidad</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+                
+                <!-- Feature 6 -->
+                <div class="bg-light p-8 rounded-xl transition duration-300 card-hover">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Monetización</h3>
+                    <p class="text-gray-600 mb-4">Vende entradas, servicios o productos digitales directamente desde tu perfil con comisiones bajas.</p>
+                    <a href="#" class="text-primary font-medium flex items-center space-x-1">
+                        <span>Ver planes</span>
+                        <i class="fas fa-arrow-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Directorio de Artistas -->
+    <section id="directorio" class="py-16 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold font-display mb-2">Directorio de Artistas</h2>
+                    <p class="text-lg text-gray-600">Descubre y conecta con los mejores talentos creativos</p>
+                </div>
+                <a href="#" class="mt-4 md:mt-0 flex items-center space-x-2 text-primary font-medium">
+                    <span>Ver todos los artistas</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <!-- Filtros -->
+            <div class="mb-8 bg-white p-4 rounded-xl shadow-sm">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Disciplina</label>
+                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                            <option>Todas</option>
+                            <option>Música</option>
+                            <option>Artes visuales</option>
+                            <option>Artes escénicas</option>
+                            <option>Técnicos</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ubicación</label>
+                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                            <option>Cualquier lugar</option>
+                            <option>España</option>
+                            <option>México</option>
+                            <option>Argentina</option>
+                            <option>Colombia</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Estilo</label>
+                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                            <option>Todos</option>
+                            <option>Electrónica</option>
+                            <option>Rock</option>
+                            <option>Arte digital</option>
+                            <option>Teatro</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Ordenar por</label>
+                        <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                            <option>Recomendados</option>
+                            <option>Mejor valorados</option>
+                            <option>Nuevos</option>
+                            <option>Popularidad</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Grid de Artistas -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Artista 1 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 artist-card">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Artista" class="w-full h-48 object-cover">
+                        <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-black to-transparent flex items-end p-4">
+                            <div class="flex space-x-2">
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-spotify"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">María López</h3>
+                                <p class="text-gray-600">Cantante | Madrid, España</p>
+                            </div>
+                            <div class="flex items-center space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-800">4.9</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Pop</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Jazz</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Soul</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <a href="#" class="text-primary text-sm font-medium flex items-center">
+                                <span>Ver perfil</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                            <button class="text-secondary hover:text-secondary-dark">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Artista 2 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 artist-card">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1469&q=80" alt="Artista" class="w-full h-48 object-cover">
+                        <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-black to-transparent flex items-end p-4">
+                            <div class="flex space-x-2">
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-spotify"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">DJ Cósmico</h3>
+                                <p class="text-gray-600">DJ/Productor | CDMX, México</p>
+                            </div>
+                            <div class="flex items-center space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-800">4.7</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Electrónica</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">House</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Techno</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <a href="#" class="text-primary text-sm font-medium flex items-center">
+                                <span>Ver perfil</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                            <button class="text-secondary hover:text-secondary-dark">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Artista 3 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 artist-card">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1471&q=80" alt="Artista" class="w-full h-48 object-cover">
+                        <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-black to-transparent flex items-end p-4">
+                            <div class="flex space-x-2">
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-behance"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-dribbble"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Ana Torres</h3>
+                                <p class="text-gray-600">Diseñadora Visual | Buenos Aires, Argentina</p>
+                            </div>
+                            <div class="flex items-center space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-800">5.0</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Ilustración</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Arte digital</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Motion</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <a href="#" class="text-primary text-sm font-medium flex items-center">
+                                <span>Ver perfil</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                            <button class="text-secondary hover:text-secondary-dark">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Artista 4 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 artist-card">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1545167622-3a6ac756afa4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=712&q=80" alt="Artista" class="w-full h-48 object-cover">
+                        <div class="artist-overlay absolute inset-0 bg-gradient-to-t from-black to-transparent flex items-end p-4">
+                            <div class="flex space-x-2">
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-instagram"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fas fa-globe"></i>
+                                </a>
+                                <a href="#" class="bg-white text-primary p-2 rounded-full hover:bg-primary hover:text-white transition">
+                                    <i class="fab fa-youtube"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="font-bold text-lg">Carlos Méndez</h3>
+                                <p class="text-gray-600">Técnico de Sonido | Bogotá, Colombia</p>
+                            </div>
+                            <div class="flex items-center space-x-1 text-yellow-400">
+                                <i class="fas fa-star"></i>
+                                <span class="text-gray-800">4.8</span>
+                            </div>
+                        </div>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Sonido en vivo</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Grabación</span>
+                            <span class="bg-purple-100 text-primary text-xs px-2 py-1 rounded">Mezcla</span>
+                        </div>
+                        <div class="mt-4 flex justify-between items-center">
+                            <a href="#" class="text-primary text-sm font-medium flex items-center">
+                                <span>Ver perfil</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                            <button class="text-secondary hover:text-secondary-dark">
+                                <i class="far fa-heart"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- IA Creativa -->
+    <section id="ia" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold font-display mb-4">IA Creativa</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Automatiza y potencia tu creatividad con nuestras herramientas de inteligencia artificial</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-12 items-center">
+                <div>
+                    <div class="mb-8">
+                        <div class="flex items-center mb-3">
+                            <div class="gradient-bg text-white p-2 rounded-lg mr-4">
+                                <i class="fas fa-magic"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Generación de contenido</h3>
+                        </div>
+                        <p class="text-gray-600 ml-16">Crea biografías, descripciones de eventos y textos promocionales en múltiples idiomas con solo unos clics.</p>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <div class="flex items-center mb-3">
+                            <div class="gradient-bg text-white p-2 rounded-lg mr-4">
+                                <i class="fas fa-chart-pie"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Análisis predictivo</h3>
+                        </div>
+                        <p class="text-gray-600 ml-16">Nuestra IA analiza tendencias y te sugiere oportunidades de colaboración, eventos y conexiones relevantes.</p>
+                    </div>
+                    
+                    <div class="mb-8">
+                        <div class="flex items-center mb-3">
+                            <div class="gradient-bg text-white p-2 rounded-lg mr-4">
+                                <i class="fas fa-tasks"></i>
+                            </div>
+                            <h3 class="text-xl font-bold">Automatización</h3>
+                        </div>
+                        <p class="text-gray-600 ml-16">Genera propuestas, presupuestos y contratos automáticamente. Programa publicaciones en redes sociales.</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-8 rounded-xl border border-gray-200">
+                    <div class="mb-6">
+                        <h3 class="text-xl font-bold mb-4">Generador de biografías</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Tipo de artista</label>
+                                <select class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary">
+                                    <option>Músico</option>
+                                    <option>Artista visual</option>
+                                    <option>Performero</option>
+                                    <option>Técnico</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Estilo principal</label>
+                                <input type="text" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" placeholder="Ej: Pop, Arte digital, Teatro...">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Experiencia (años)</label>
+                                <input type="number" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" placeholder="5">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Logros destacados</label>
+                                <textarea class="w-full rounded-lg border-gray-300 shadow-sm focus:border-primary focus:ring-primary" rows="2" placeholder="Premios, colaboraciones importantes..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="gradient-bg text-white w-full py-3 rounded-lg font-medium hover:shadow-md transition">Generar biografía con IA</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Eventos -->
+    <section id="eventos" class="py-16 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                <div>
+                    <h2 class="text-3xl font-bold font-display mb-2">Próximos Eventos</h2>
+                    <p class="text-lg text-gray-600">Descubre y participa en eventos culturales alrededor del mundo</p>
+                </div>
+                <a href="#" class="mt-4 md:mt-0 flex items-center space-x-2 text-primary font-medium">
+                    <span>Ver todos los eventos</span>
+                    <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8">
+                <!-- Evento 1 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1492684223066-81342ee5ff30?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Evento" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 left-4 bg-primary text-white px-3 py-1 rounded-full text-sm font-medium">
+                            Música
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar mr-2"></i>
+                            <span>15 Jun 2023 • 20:00</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Festival de Verano Electrónico</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span>Madrid, España</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">El festival más grande de música electrónica con los mejores DJs internacionales en un escenario al aire libre.</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-1 text-sm">
+                                <i class="fas fa-users"></i>
+                                <span>1,200 asistentes</span>
+                            </div>
+                            <a href="#" class="text-primary font-medium flex items-center">
+                                <span>Ver más</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evento 2 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1475721027785-f74eccf877e2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Evento" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 left-4 bg-secondary text-white px-3 py-1 rounded-full text-sm font-medium">
+                            Arte
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar mr-2"></i>
+                            <span>22 Jun - 30 Jul 2023</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Exposición de Arte Digital</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span>CDMX, México</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Muestra internacional de arte digital con realidad aumentada e instalaciones interactivas de artistas emergentes.</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-1 text-sm">
+                                <i class="fas fa-users"></i>
+                                <span>500 asistentes</span>
+                            </div>
+                            <a href="#" class="text-primary font-medium flex items-center">
+                                <span>Ver más</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Evento 3 -->
+                <div class="bg-white rounded-xl overflow-hidden shadow-md transition duration-300 hover:shadow-lg">
+                    <div class="relative">
+                        <img src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Evento" class="w-full h-48 object-cover">
+                        <div class="absolute top-4 left-4 bg-accent text-white px-3 py-1 rounded-full text-sm font-medium">
+                            Taller
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <div class="flex items-center text-sm text-gray-500 mb-2">
+                            <i class="far fa-calendar mr-2"></i>
+                            <span>5 Jul 2023 • 18:00</span>
+                        </div>
+                        <h3 class="font-bold text-xl mb-2">Masterclass: Producción Musical</h3>
+                        <div class="flex items-center text-sm text-gray-500 mb-4">
+                            <i class="fas fa-map-marker-alt mr-2"></i>
+                            <span>Online</span>
+                        </div>
+                        <p class="text-gray-600 mb-4">Aprende técnicas avanzadas de producción musical con el reconocido productor Juan Pérez. Incluye sesión de preguntas.</p>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center space-x-1 text-sm">
+                                <i class="fas fa-users"></i>
+                                <span>85 inscritos</span>
+                            </div>
+                            <a href="#" class="text-primary font-medium flex items-center">
+                                <span>Ver más</span>
+                                <i class="fas fa-chevron-right ml-1 text-xs"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Marketplace -->
+    <section id="marketplace" class="py-16 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold font-display mb-4">Marketplace de Servicios</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Contrata o ofrece servicios creativos y técnicos con total seguridad</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Servicio 1 -->
+                <div class="bg-light rounded-xl p-6 transition duration-300 hover:shadow-lg">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-music"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Producción Musical</h3>
+                    <p class="text-gray-600 mb-4">Desde mezcla y masterización hasta producción completa de tu proyecto musical.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-primary font-medium">Desde €150</span>
+                        <a href="#" class="text-sm text-gray-500 hover:text-primary">Ver servicios</a>
+                    </div>
+                </div>
+                
+                <!-- Servicio 2 -->
+                <div class="bg-light rounded-xl p-6 transition duration-300 hover:shadow-lg">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-paint-brush"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Diseño Gráfico</h3>
+                    <p class="text-gray-600 mb-4">Flyers, carteles, identidad visual y diseño para redes sociales de tus eventos.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-primary font-medium">Desde €80</span>
+                        <a href="#" class="text-sm text-gray-500 hover:text-primary">Ver servicios</a>
+                    </div>
+                </div>
+                
+                <!-- Servicio 3 -->
+                <div class="bg-light rounded-xl p-6 transition duration-300 hover:shadow-lg">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-video"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Videografía</h3>
+                    <p class="text-gray-600 mb-4">Grabación y edición de videoclips, documentales y cobertura de eventos.</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-primary font-medium">Desde €250</span>
+                        <a href="#" class="text-sm text-gray-500 hover:text-primary">Ver servicios</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="bg-primary bg-opacity-10 rounded-xl p-8 border border-primary border-opacity-20">
+                <div class="grid md:grid-cols-2 gap-8 items-center">
+                    <div>
+                        <h3 class="text-2xl font-bold mb-4">¿Eres un profesional creativo?</h3>
+                        <p class="text-gray-700 mb-6">Únete a nuestro marketplace y ofrece tus servicios a una comunidad global de artistas y organizadores. Gestiona tus proyectos, recibe pagos seguros y construye tu reputación.</p>
+                        <a href="#" class="gradient-bg text-white px-6 py-3 rounded-lg font-medium inline-block hover:shadow-md transition">Regístrate como profesional</a>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-sm">
+                        <h4 class="font-bold mb-4">Beneficios para profesionales</h4>
+                        <ul class="space-y-3">
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-accent mr-2 mt-1"></i>
+                                <span>Perfil verificable con portafolio multimedia</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-accent mr-2 mt-1"></i>
+                                <span>Sistema de valoraciones y reputación</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-accent mr-2 mt-1"></i>
+                                <span>Pagos seguros y contratos digitales</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-accent mr-2 mt-1"></i>
+                                <span>Recomendaciones automáticas por IA</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fas fa-check-circle text-accent mr-2 mt-1"></i>
+                                <span>Herramientas de gestión de proyectos</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Comunidad -->
+    <section id="comunidad" class="py-16 bg-light">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl font-bold font-display mb-4">Únete a Nuestra Comunidad</h2>
+                <p class="text-lg text-gray-600 max-w-3xl mx-auto">Conecta con otros creativos, comparte conocimiento y haz crecer tu red profesional</p>
+            </div>
+            
+            <div class="grid md:grid-cols-3 gap-8 mb-12">
+                <!-- Foro -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Foros Temáticos</h3>
+                    <p class="text-gray-600 mb-4">Participa en discusiones sobre música, arte visual, producción de eventos y más.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-start">
+                            <img src="https://images.unsplash.com/photo-1438761681033-6461ffad8d80?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Usuario" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h4 class="font-medium">¿Cómo mejorar mi presencia en redes?</h4>
+                                <p class="text-sm text-gray-500">25 respuestas • 120 vistas</p>
+                            </div>
+                        </div>
+                        <div class="flex items-start">
+                            <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Usuario" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h4 class="font-medium">Recomendaciones de equipo para sonido en vivo</h4>
+                                <p class="text-sm text-gray-500">42 respuestas • 210 vistas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="text-primary font-medium flex items-center mt-6">
+                        <span>Ver todos los temas</span>
+                        <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+                
+                <!-- Convocatorias -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-bullhorn"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Convocatorias Abiertas</h3>
+                    <p class="text-gray-600 mb-4">Oportunidades para artistas: festivales, residencias, becas y colaboraciones.</p>
+                    <div class="space-y-4">
+                        <div class="border-l-2 border-primary pl-4">
+                            <h4 class="font-medium">Festival busca artistas emergentes</h4>
+                            <p class="text-sm text-gray-500">Fecha límite: 30 Jun 2023</p>
+                        </div>
+                        <div class="border-l-2 border-secondary pl-4">
+                            <h4 class="font-medium">Residencia artística en Barcelona</h4>
+                            <p class="text-sm text-gray-500">Fecha límite: 15 Jul 2023</p>
+                        </div>
+                        <div class="border-l-2 border-accent pl-4">
+                            <h4 class="font-medium">Colaboración música + arte visual</h4>
+                            <p class="text-sm text-gray-500">Fecha límite: 10 Jul 2023</p>
+                        </div>
+                    </div>
+                    <a href="#" class="text-primary font-medium flex items-center mt-6">
+                        <span>Ver todas las convocatorias</span>
+                        <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+                
+                <!-- Destacados -->
+                <div class="bg-white rounded-xl p-6 shadow-sm">
+                    <div class="gradient-text text-4xl mb-4">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Artistas Destacados</h3>
+                    <p class="text-gray-600 mb-4">Perfiles recomendados por la comunidad y nuestro algoritmo de IA.</p>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <img src="https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1443&q=80" alt="Artista" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h4 class="font-medium">Laura G.</h4>
+                                <p class="text-sm text-gray-500">Fotógrafa • 4.9 ★</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <img src="https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=687&q=80" alt="Artista" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h4 class="font-medium">DJ Kala</h4>
+                                <p class="text-sm text-gray-500">DJ/Productor • 4.8 ★</p>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <img src="https://images.unsplash.com/photo-1485178575877-1a13bf489dfe?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1491&q=80" alt="Artista" class="w-10 h-10 rounded-full mr-3">
+                            <div>
+                                <h4 class="font-medium">Andrés R.</h4>
+                                <p class="text-sm text-gray-500">Ilustrador • 5.0 ★</p>
+                            </div>
+                        </div>
+                    </div>
+                    <a href="#" class="text-primary font-medium flex items-center mt-6">
+                        <span>Ver todos los artistas</span>
+                        <i class="fas fa-chevron-right ml-2 text-sm"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="bg-gradient-to-r from-primary to-secondary text-white rounded-xl p-8 text-center">
+                <h3 class="text-2xl font-bold font-display mb-4">¿Listo para unirte a la comunidad creativa más innovadora?</h3>
+                <p class="text-lg mb-6 max-w-3xl mx-auto">Regístrate gratis y comienza a conectar con miles de artistas y profesionales culturales alrededor del mundo.</p>
+                <div class="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
+                    <a href="#" class="bg-white text-primary px-6 py-3 rounded-lg font-medium hover:bg-opacity-90 transition">Regístrate ahora</a>
+                    <a href="#" class="border-2 border-white text-white px-6 py-3 rounded-lg font-medium hover:bg-white hover:bg-opacity-10 transition">Más información</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
+                <div>
+                    <h4 class="text-lg font-bold mb-4">RedCom360</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Sobre nosotros</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Equipo</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Trabaja con nosotros</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Blog</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Recursos</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Centro de ayuda</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Tutoriales</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">API para desarrolladores</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Estado del servicio</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Legal</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Términos de servicio</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Política de privacidad</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Cookies</a></li>
+                        <li><a href="#" class="text-gray-300 hover:text-white transition">Licencias</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4">Conéctate</h4>
+                    <div class="flex space-x-4 mb-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl"><i class="fab fa-linkedin"></i></a>
+                        <a href="#" class="text-gray-300 hover:text-white transition text-xl"><i class="fab fa-youtube"></i></a>
+                    </div>
+                    <p class="text-gray-300">Suscríbete a nuestro newsletter</p>
+                    <div class="mt-2 flex">
+                        <input type="email" placeholder="Tu email" class="bg-gray-700 text-white px-3 py-2 rounded-l focus:outline-none focus:ring-1 focus:ring-primary w-full">
+                        <button class="bg-primary text-white px-4 py-2 rounded-r hover:bg-opacity-90 transition">
+                            <i class="fas fa-paper-plane"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="flex items-center space-x-2 mb-4 md:mb-0">
+                    <div class="gradient-bg text-white p-2 rounded-lg">
+                        <i class="fas fa-palette"></i>
+                    </div>
+                    <span class="text-xl font-bold font-display gradient-text">RedCom360</span>
+                </div>
+                <p class="text-gray-400">© 2023 RedCom360. Todos los derechos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle language dropdown
+        const languageButton = document.getElementById('languageButton');
+        const languageDropdown = document.getElementById('languageDropdown');
+        
+        languageButton.addEventListener('click', () => {
+            languageDropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (event) => {
+            if (!languageButton.contains(event.target) && !languageDropdown.contains(event.target)) {
+                languageDropdown.classList.add('hidden');
+            }
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active-nav');
+                });
+                this.classList.add('active-nav');
+            });
+        });
+        
+        // Set active nav link based on scroll position
+        window.addEventListener('scroll', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (pageYOffset >= sectionTop - 300) {
+                    current = section.getAttribute('id');
+                }
+            });
+            
+            navLinks.forEach(link => {
+                link.classList.remove('active-nav');
+                if (link.getAttribute('href') === `#${current}`) {
+                    link.classList.add('active-nav');
+                }
+            });
+        });
+        
+        // Set initial active nav link
+        document.querySelector('.nav-link').classList.add('active-nav');
+    </script>
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Albertyo360/redcom360" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>
